@@ -136,4 +136,29 @@ export interface Database {
 }
 
 export type Exercise = Database['public']['Tables']['exercises']['Row'];
-export type Workout = Database['public']['Tables']['workouts']['Row']; 
+export type Workout = Database['public']['Tables']['workouts']['Row'];
+
+export interface Progress {
+  id: string;
+  user_id: string;
+  date: string;
+  metrics: {
+    weight?: number | null;
+    body_fat?: number | null;
+    measurements?: {
+      chest?: number | null;
+      waist?: number | null;
+      hips?: number | null;
+      biceps?: number | null;
+      thighs?: number | null;
+    };
+  };
+  photos?: {
+    front?: string | null;
+    side?: string | null;
+    back?: string | null;
+  };
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+} 

@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Fitness Tracker
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
@@ -25,17 +25,54 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
+        <q-item-label header>
+          Navigation
         </q-item-label>
 
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item
+          clickable
+          v-ripple
+          :to="{ name: 'workouts' }"
+          exact
+        >
+          <q-item-section avatar>
+            <q-icon name="fitness_center" />
+          </q-item-section>
+
+          <q-item-section>
+            Workouts
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          :to="{ name: 'exercises' }"
+          exact
+        >
+          <q-item-section avatar>
+            <q-icon name="sports_gymnastics" />
+          </q-item-section>
+
+          <q-item-section>
+            Exercise Library
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          :to="{ name: 'progress' }"
+          exact
+        >
+          <q-item-section avatar>
+            <q-icon name="monitoring" />
+          </q-item-section>
+
+          <q-item-section>
+            Progress Tracking
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -96,7 +133,7 @@ const linksList: EssentialLinkProps[] = [
 
 const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer () {
+const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+};
 </script>

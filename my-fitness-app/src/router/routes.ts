@@ -53,6 +53,21 @@ const routes: RouteRecordRaw[] = [
         name: 'edit-exercise',
         component: () => import('pages/ExerciseFormPage.vue'),
         props: true
+      },
+      {
+        path: 'progress',
+        name: 'progress',
+        component: () => import('pages/ProgressListPage.vue')
+      },
+      {
+        path: 'progress/create',
+        name: 'create-progress',
+        component: () => import('pages/ProgressFormPage.vue')
+      },
+      {
+        path: 'progress/:id/edit',
+        name: 'edit-progress',
+        component: () => import('pages/ProgressFormPage.vue')
       }
     ],
   },

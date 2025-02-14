@@ -1,11 +1,10 @@
-import { supabase, handleSupabaseError } from './supabase';
-import type { Database } from '../types/supabase';
+import { supabase } from 'src/boot/supabase';
+import type { Progress } from 'src/types/supabase';
 
-type Progress = Database['public']['Tables']['progress']['Row'];
-type ProgressInsert = Database['public']['Tables']['progress']['Insert'];
-type ProgressUpdate = Database['public']['Tables']['progress']['Update'];
-
-export const progressService = {
+class ProgressService {
+  /**
+   * Get all progress entries for a user, ordered by date descending
+   */
   async getProgress(userId: string): Promise<Progress[]> {
     const { data, error } = await supabase
       .from('progress')
@@ -13,117 +12,117 @@ export const progressService = {
       .eq('user_id', userId)
       .order('date', { ascending: false });
 
-    if (error) handleSupabaseError(error);
-    return data || [];
-  },
+    if (error) {
+      throw error;
+    }
 
-  async getProgressById(progressId: string): Promise<Progress> {
+    return data;
+  }
+
+  /**
+   * Get a specific progress entry by ID
+   */
+  async getProgressById(id: string): Promise<Progress | null> {
     const { data, error } = await supabase
       .from('progress')
       .select('*')
-      .eq('id', progressId)
+      .eq('id', id)
       .single();
 
-    if (error) handleSupabaseError(error);
-    return data;
-  },
+    if (error) {
+      throw error;
+    }
 
-  async createProgress(progress: ProgressInsert): Promise<Progress> {
+    return data;
+  }
+
+  /**
+   * Create a new progress entry
+   */
+  async createProgress(progress: Progress): Promise<Progress> {
     const { data, error } = await supabase
       .from('progress')
       .insert(progress)
       .select()
       .single();
 
-    if (error) handleSupabaseError(error);
-    return data;
-  },
+    if (error) {
+      throw error;
+    }
 
-  async updateProgress(progressId: string, updates: ProgressUpdate): Promise<Progress> {
+    return data;
+  }
+
+  /**
+   * Update an existing progress entry
+   */
+  async updateProgress(id: string, progress: Partial<Progress>): Promise<Progress> {
     const { data, error } = await supabase
       .from('progress')
-      .update(updates)
-      .eq('id', progressId)
+      .update(progress)
+      .eq('id', id)
       .select()
       .single();
 
-    if (error) handleSupabaseError(error);
-    return data;
-  },
+    if (error) {
+      throw error;
+    }
 
-  async deleteProgress(progressId: string): Promise<void> {
+    return data;
+  }
+
+  /**
+   * Delete a progress entry
+   */
+  async deleteProgress(id: string): Promise<void> {
     const { error } = await supabase
       .from('progress')
       .delete()
-      .eq('id', progressId);
+      .eq('id', id);
 
-    if (error) handleSupabaseError(error);
-  },
-
-  async getProgressByDateRange(
-    userId: string,
-    startDate: string,
-    endDate: string
-  ): Promise<Progress[]> {
-    const { data, error } = await supabase
-      .from('progress')
-      .select('*')
-      .eq('user_id', userId)
-      .gte('date', startDate)
-      .lte('date', endDate)
-      .order('date', { ascending: true });
-
-    if (error) handleSupabaseError(error);
-    return data || [];
-  },
-
-  async getLatestProgress(userId: string): Promise<Progress | null> {
-    const { data, error } = await supabase
-      .from('progress')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116 is the error code for no rows returned
-      handleSupabaseError(error);
+    if (error) {
+      throw error;
     }
+  }
 
-    return data || null;
-  },
-
-  async uploadProgressPhoto(
-    userId: string,
-    file: File,
-    type: 'front' | 'back' | 'side'
-  ): Promise<string> {
+  /**
+   * Upload a progress photo and return the URL
+   */
+  async uploadProgressPhoto(userId: string, file: File): Promise<string> {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}/${type}-${Date.now()}.${fileExt}`;
-    const filePath = `progress-photos/${fileName}`;
+    const fileName = \`\${userId}/\${Date.now()}.\${fileExt}\`;
+    const filePath = \`progress-photos/\${fileName}\`;
 
     const { error: uploadError } = await supabase.storage
       .from('progress-photos')
       .upload(filePath, file);
 
-    if (uploadError) handleSupabaseError(uploadError);
+    if (uploadError) {
+      throw uploadError;
+    }
 
-    const { data: { publicUrl } } = supabase.storage
+    const { data } = supabase.storage
       .from('progress-photos')
       .getPublicUrl(filePath);
 
-    return publicUrl;
-  },
+    return data.publicUrl;
+  }
 
+  /**
+   * Delete a progress photo from storage
+   */
   async deleteProgressPhoto(photoUrl: string): Promise<void> {
     const path = photoUrl.split('/').pop();
-    if (!path) throw new Error('Invalid photo URL');
+    if (!path) return;
 
     const { error } = await supabase.storage
       .from('progress-photos')
       .remove([path]);
 
-    if (error) handleSupabaseError(error);
-  },
-}; 
+    if (error) {
+      throw error;
+    }
+  }
+}
+
+export const progressService = new ProgressService(); 

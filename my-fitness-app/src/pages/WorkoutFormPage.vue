@@ -189,6 +189,7 @@
                                 dense
                                 outlined
                                 style="width: 80px"
+                                :rules="validationRules.weight"
                               />
                             </q-td>
                             <q-td key="reps" :props="props">
@@ -198,6 +199,7 @@
                                 dense
                                 outlined
                                 style="width: 80px"
+                                :rules="validationRules.reps"
                               />
                             </q-td>
                             <q-td key="rir" :props="props">
@@ -207,6 +209,7 @@
                                 dense
                                 outlined
                                 style="width: 80px"
+                                :rules="validationRules.rir"
                               />
                             </q-td>
                             <q-td key="set_type" :props="props">
@@ -227,6 +230,7 @@
                                 dense
                                 outlined
                                 style="width: 80px"
+                                :rules="validationRules.rest_time"
                               />
                             </q-td>
                             <q-td key="actions" :props="props">
@@ -415,6 +419,22 @@ const setColumns = [
   }
 ];
 
+// Add these validation rules after the setColumns definition
+const validationRules = {
+  weight: [
+    val => !val || (val >= 0 && val <= 1000) || 'Weight must be between 0 and 1000 kg'
+  ],
+  reps: [
+    val => !val || (val >= 0 && val <= 100) || 'Reps must be between 0 and 100'
+  ],
+  rir: [
+    val => !val || (val >= 0 && val <= 10) || 'RIR must be between 0 and 10'
+  ],
+  rest_time: [
+    val => !val || (val >= 0 && val <= 600) || 'Rest time must be between 0 and 600 seconds'
+  ]
+};
+
 // Computed
 const isEdit = computed(() => !!route.params.id);
 
@@ -516,6 +536,25 @@ const removeSet = (exercise: WorkoutExercise, index: number) => {
 };
 
 const onSubmit = async () => {
+  // Validate that at least one exercise is added
+  if (form.value.exercises.length === 0) {
+    $q.notify({
+      type: 'negative',
+      message: 'Please add at least one exercise to the workout'
+    });
+    return;
+  }
+
+  // Validate that all exercises have an exercise selected
+  const invalidExercises = form.value.exercises.filter(ex => !ex.exercise);
+  if (invalidExercises.length > 0) {
+    $q.notify({
+      type: 'negative',
+      message: 'Please select an exercise for all entries'
+    });
+    return;
+  }
+
   try {
     const workoutData = {
       user_id: TEST_USER_ID,
