@@ -16,10 +16,12 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
   - 🔄 Workout List Screen (In Progress)
   - 🔄 Create/Edit Workout Screen (In Progress)
   - 🔄 Workout Details Screen (In Progress)
-- 🔄 **Exercise Library**
+- ✅ **Exercise Library**
   - ✅ System Exercises Added
-  - 📝 Search & Filter Exercises
-  - 📝 Add/Edit Custom Exercises
+  - ✅ Search & Filter Exercises
+  - ✅ Add/Edit Custom Exercises
+  - ✅ Exercise Details View
+  - ✅ Exercise Form with Image Upload
 - 📝 **Progress Tracking**
   - 📝 Metrics Logging
   - 📝 Charts & Analytics
@@ -52,18 +54,18 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
    - Goal Service
 
 ### Current Focus
-1. 🔄 Implementing Workout Management UI
-   - Creating Workout List Screen
-   - Building Create/Edit Workout Form
-   - Implementing Workout Details View
-2. 🔄 Testing with Test User
-   - Using seeded exercises
-   - Creating sample workouts
-   - Testing CRUD operations
+1. 🔄 Completing Workout Management UI
+   - Finishing Create/Edit Workout Form
+   - Testing CRUD operations with Exercise Library integration
+2. 📝 Next: Progress Tracking Implementation
+   - Setting up Progress Tracking UI
+   - Implementing metrics logging
+   - Adding charts and analytics
+   - Integrating progress photo uploads
 
 ### Next Steps
 1. Complete Workout Management screens
-2. Implement Exercise Library features
+2. ✅ Exercise Library features (Completed)
 3. Add Progress Tracking functionality
 4. Implement Goal Setting
 5. Add User Preferences
@@ -84,8 +86,8 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
 
 2. **Create core features:**
    - Workout Management (In Progress)
-   - Exercise Library
-   - Progress Tracking
+   - ✅ Exercise Library (Completed)
+   - Progress Tracking (Next)
 
 3. **Add user preferences and customization.**
 

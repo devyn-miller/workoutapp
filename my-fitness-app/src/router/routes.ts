@@ -31,6 +31,28 @@ const routes: RouteRecordRaw[] = [
         name: 'edit-workout',
         component: () => import('pages/WorkoutFormPage.vue'),
         props: true
+      },
+      {
+        path: 'exercises',
+        name: 'exercises',
+        component: () => import('pages/ExerciseLibraryPage.vue')
+      },
+      {
+        path: 'exercises/create',
+        name: 'create-exercise',
+        component: () => import('pages/ExerciseFormPage.vue')
+      },
+      {
+        path: 'exercises/:id',
+        name: 'exercise-details',
+        component: () => import('pages/ExerciseDetailsPage.vue'),
+        props: true
+      },
+      {
+        path: 'exercises/:id/edit',
+        name: 'edit-exercise',
+        component: () => import('pages/ExerciseFormPage.vue'),
+        props: true
       }
     ],
   },
