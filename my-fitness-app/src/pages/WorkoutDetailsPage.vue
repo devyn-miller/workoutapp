@@ -83,7 +83,7 @@
                 v-for="exercise in workout.exercises"
                 :key="exercise.id"
                 group="exercises"
-                :label="getExerciseName(exercise.exercise_id)"
+                :label="exerciseNames.get(exercise.exercise_id) || 'Loading...'"
                 :caption="`${exercise.sets.length} sets`"
               >
                 <q-card>
@@ -152,7 +152,6 @@ const props = defineProps<{
   id: string;
 }>();
 
-const route = useRoute();
 const router = useRouter();
 
 const workout = ref<Workout | null>(null);
@@ -161,33 +160,33 @@ const error = ref<string | null>(null);
 const showDeleteDialog = ref(false);
 const deleting = ref(false);
 
+const exerciseNames = ref(new Map<string, string>());
+
 const setColumns = [
   {
     name: 'set_number',
-    label: '#',
+    label: 'Set',
     field: 'set_number',
-    align: 'left',
-  },
-  {
-    name: 'set_type',
-    label: 'Type',
-    field: 'set_type',
-    format: (val: string) => val.charAt(0).toUpperCase() + val.slice(1),
-  },
-  {
-    name: 'reps',
-    label: 'Reps',
-    field: 'reps',
+    align: 'center' as const,
   },
   {
     name: 'weight',
     label: 'Weight',
     field: 'weight',
+    align: 'right' as const,
+    format: (val: string) => `${val} kg`,
   },
   {
-    name: 'completed',
-    label: 'Done',
-    field: 'completed',
+    name: 'reps',
+    label: 'Reps',
+    field: 'reps',
+    format: (val: string) => val || '-',
+  },
+  { name: 'rir', label: 'RIR', field: 'rir', format: (val: string) => val || '-' },
+  {
+    name: 'set_type',
+    label: 'Type',
+    field: 'set_type',
   },
 ];
 
@@ -205,14 +204,13 @@ const formatDuration = (duration: number) => {
   return `${minutes}m`;
 };
 
-const getExerciseName = async (exerciseId: string): Promise<string> => {
-  try {
-    const exercise = await exerciseService.getExerciseById(exerciseId);
-    return exercise.name;
-  } catch (err) {
-    console.error('Error loading exercise name:', err);
-    return 'Unknown Exercise';
+const getExerciseName = async (exerciseId: string) => {
+  if (exerciseNames.value.has(exerciseId)) {
+    return exerciseNames.value.get(exerciseId)!;
   }
+  const exercise = await exerciseService.getExerciseById(exerciseId);
+  exerciseNames.value.set(exerciseId, exercise.name);
+  return exercise.name;
 };
 
 const loadWorkout = async () => {
@@ -221,6 +219,12 @@ const loadWorkout = async () => {
 
   try {
     workout.value = await workoutService.getWorkoutById(props.id);
+    if (workout.value) {
+      // Preload the names for all exercises in the workout
+      await Promise.all(
+        workout.value.exercises.map(ex => getExerciseName(ex.exercise_id))
+      );
+    }
   } catch (err) {
     error.value = 'Failed to load workout';
     console.error('Error loading workout:', err);
@@ -255,7 +259,7 @@ const deleteWorkout = async () => {
   deleting.value = true;
   try {
     await workoutService.deleteWorkout(props.id);
-    router.push({ name: 'workouts' });
+    await router.push({ name: 'workouts' });
   } catch (err) {
     console.error('Error deleting workout:', err);
   } finally {
@@ -264,7 +268,7 @@ const deleteWorkout = async () => {
   }
 };
 
-onMounted(() => {
-  loadWorkout();
+onMounted(async () => {
+  await loadWorkout();
 });
 </script> 

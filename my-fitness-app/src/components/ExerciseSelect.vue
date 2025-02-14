@@ -15,7 +15,7 @@
     use-input
     input-debounce="300"
   >
-    <template v-slot:option="{ itemProps, opt, selected }">
+    <template v-slot:option="{ itemProps, opt }">
       <q-item v-bind="itemProps">
         <q-item-section>
           <q-item-label>{{ opt.name }}</q-item-label>
@@ -45,68 +45,53 @@
   </q-select>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
+<script lang="ts">
+import { ref, onMounted, watch } from 'vue';
 import { exerciseService } from 'src/services';
-import type { Database } from 'src/types/supabase';
+import type { Exercise } from 'src/types/supabase';
 
-type Exercise = Database['public']['Tables']['exercises']['Row'];
-
-const props = withDefaults(defineProps<{
-  modelValue?: string;
+const props = defineProps<{
+  modelValue: Exercise | null;
   label?: string;
   userId?: string;
-}>(), {
-  label: 'Select Exercise',
-});
+}>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | null): void;
+  (e: 'update:modelValue', value: Exercise | null): void;
 }>();
 
 const exercises = ref<Exercise[]>([]);
 const loading = ref(false);
-const error = ref<string | null>(null);
+const error = ref<string | undefined>(undefined);
 
-const selectedExercise = ref(props.modelValue);
+const selectedExercise = ref<Exercise | null>(props.modelValue);
 
-watch(selectedExercise, (newValue) => {
+watch(selectedExercise, (newValue: Exercise | null) => {
   emit('update:modelValue', newValue);
 });
 
-const loadExercises = async (searchTerm?: string) => {
-  loading.value = true;
-  error.value = null;
-
+const filterExercises = async (
+  searchTerm: string,
+  update: (options: Exercise[]) => void
+) => {
   try {
-    if (searchTerm) {
-      exercises.value = await exerciseService.searchExercises(searchTerm, {
-        userId: props.userId,
-      });
-    } else {
-      exercises.value = await exerciseService.getExercises({
-        userId: props.userId,
-      });
-    }
-  } catch (err) {
+    const result = searchTerm
+      ? await exerciseService.searchExercises(searchTerm, { userId: props.userId! })
+      : await exerciseService.getExercises({ userId: props.userId! });
+    update(result);
+  } catch (_err) {
     error.value = 'Failed to load exercises';
-    console.error('Error loading exercises:', err);
-  } finally {
-    loading.value = false;
+    update([]);
   }
 };
 
-const filterExercises = (val: string, update: (fn: () => void) => void) => {
-  update(() => {
-    if (val === '') {
-      loadExercises();
-    } else {
-      loadExercises(val);
-    }
+const loadExercises = async (searchTerm?: string) => {
+  await filterExercises(searchTerm || '', (options) => {
+    exercises.value = options;
   });
 };
 
 onMounted(() => {
-  loadExercises();
+  void loadExercises();
 });
 </script> 

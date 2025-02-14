@@ -26,13 +26,13 @@
           flat
           color="primary"
           label="View"
-          :to="{ name: 'workout-details', params: { id: workout.id }}"
+          :to="{ name: 'workout-details', params: { id: workout.id } }"
         />
         <q-btn
           flat
           color="primary"
           label="Edit"
-          :to="{ name: 'edit-workout', params: { id: workout.id }}"
+          :to="{ name: 'edit-workout', params: { id: workout.id } }"
         />
       </slot>
     </q-card-actions>
@@ -42,10 +42,9 @@
 <script setup lang="ts">
 import { date } from 'quasar';
 import WorkoutStatusBadge from './WorkoutStatusBadge.vue';
-import type { Database } from 'src/types/supabase';
+import type { Workout } from 'src/types/supabase';
 
-type Workout = Database['public']['Tables']['workouts']['Row'];
-
+// Define the required prop to expose "workout" to the template:
 const props = defineProps<{
   workout: Workout;
 }>();
