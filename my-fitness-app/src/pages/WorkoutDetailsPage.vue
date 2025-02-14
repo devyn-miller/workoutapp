@@ -138,7 +138,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { date } from 'quasar';
 import { workoutService, exerciseService } from 'src/services';
 import WorkoutStatusBadge from 'src/components/WorkoutStatusBadge.vue';

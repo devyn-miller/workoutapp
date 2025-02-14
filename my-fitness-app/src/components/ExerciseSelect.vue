@@ -79,16 +79,18 @@ const filterExercises = async (
       ? await exerciseService.searchExercises(searchTerm, { userId: props.userId! })
       : await exerciseService.getExercises({ userId: props.userId! });
     update(result);
-  } catch (_err) {
+  } catch {
     error.value = 'Failed to load exercises';
     update([]);
   }
 };
 
 const loadExercises = async (searchTerm?: string) => {
+  loading.value = true;
   await filterExercises(searchTerm || '', (options) => {
     exercises.value = options;
   });
+  loading.value = false;
 };
 
 onMounted(() => {

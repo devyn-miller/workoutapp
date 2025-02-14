@@ -44,10 +44,8 @@ import { date } from 'quasar';
 import WorkoutStatusBadge from './WorkoutStatusBadge.vue';
 import type { Workout } from 'src/types/supabase';
 
-// Define the required prop to expose "workout" to the template:
-const props = defineProps<{
-  workout: Workout;
-}>();
+// Destructure the prop so that "workout" is directly available in the template:
+const { workout } = defineProps<{ workout: Workout }>();
 
 const formatDate = (dateStr: string) => {
   return date.formatDate(dateStr, 'MMMM D, YYYY');

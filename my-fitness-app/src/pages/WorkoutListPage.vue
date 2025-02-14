@@ -135,7 +135,7 @@ const loadWorkouts = async () => {
 
 // Lifecycle
 onMounted(() => {
-  loadWorkouts();
+  void loadWorkouts();
 });
 </script>
 
