@@ -1,0 +1,107 @@
+# General Instructions File
+
+## Project Overview
+This is a fitness tracker application built using Quasar for the frontend and Supabase for the backend services, including authentication and database management. The app will include features such as user authentication, workout management, an exercise library, progress tracking, goal setting, and user preferences.
+
+Refer to the `overview.mdc` file for the full project plan and feature details and the `screens.mdc` file for the screens and their descriptions.
+
+---
+
+## Features & Progress
+
+### Core Features
+- 📝 **User Authentication**
+  - 📝 Login, Registration, Password Reset
+- 📝 **Workout Management**
+  - 📝 Workout List Screen
+  - 📝 Create/Edit Workout Screen
+  - 📝 Workout Details Screen
+- 📝 **Exercise Library**
+  - 📝 Search & Filter Exercises
+  - 📝 Add/Edit Custom Exercises
+- 📝 **Progress Tracking**
+  - 📝 Metrics Logging
+  - 📝 Charts & Analytics
+  - 📝 Progress Photos
+- 📝 **Goal Setting**
+  - 📝 Create/Edit Goals
+  - 📝 Track Goal Progress
+- 📝 **User Preferences**
+  - 📝 Dark/Light Theme
+  - 📝 Unit Settings (Metric/Imperial)
+  - 📝 Workout Reminders
+
+### Emoji Legend
+- ✅ Completed
+- 🔄 In Progress
+- 📝 Planned/Not Started
+- 🚫 Removed/Not Doing
+
+---
+
+## Development Priorities
+1. **Build UI and core features without authentication.**
+   - Skip login/registration for now to ease testing during local development.
+   - Use a dummy user/session for testing database interactions.
+
+2. **Create core features:**
+   - Workout Management
+   - Exercise Library
+   - Progress Tracking
+
+3. **Add user preferences and customization.**
+
+4. **Implement authentication and secure access as the final step.**
+
+---
+
+## Coding Standards
+1. Use Quasar components (e.g., `QInput`, `QForm`, `QButton`) for consistency.
+2. Keep components modular and reusable.
+3. All files should follow this structure:
+   - `/components`: Reusable UI components.
+   - `/pages`: Screens or views (e.g., Dashboard, Workout List).
+   - `/services`: API integrations (e.g., Supabase functions).
+   - `/store`: State management (using Pinia or Vuex).
+4. Use TypeScript for better type safety.
+5. Add clear comments for complex logic.
+
+---
+
+## Testing Guidelines
+1. For local testing, skip login/authentication until all features are implemented.
+2. Use a dummy user session for interacting with the database.
+3. Ensure all features (UI and API) are manually tested before marking as ✅ in the progress list.
+4. Test on multiple devices for responsiveness (mobile, desktop).
+
+---
+
+## Notes & Reminders
+1. **Supabase Setup:**
+   - Ensure the `.env` file contains valid Supabase keys.
+   - Use Supabase’s SDK for all database and authentication logic.
+2. **Deployment:**
+   - Test the app thoroughly before deploying as a PWA or mobile app.
+
+---
+
+## Example Dummy User for Testing
+To bypass login during development, use this dummy user:
+
+```javascript
+// src/services/auth.js
+export const dummyUser = {
+  id: '123',
+  username: 'TestUser',
+  email: 'testuser@example.com',
+  preferences: {
+    units: 'metric',
+    theme: 'dark',
+  },
+};
+
+// Use this dummyUser for testing instead of actual authentication
+```
+
+Replace the dummy user with real authentication logic once the app’s core features are complete.
+

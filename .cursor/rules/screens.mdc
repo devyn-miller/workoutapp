@@ -1,0 +1,219 @@
+---
+description: creating screens in the app
+globs: 
+---
+
+## **1. Authentication Screens**
+
+#### **1.1 Login Screen**
+- **Purpose:** Allows users to log in securely.
+- **Features:**
+  - Email/password input.
+  - "Forgot Password?" link.
+  - Feedback for failed attempts (e.g., invalid credentials).
+- **Schema Alignment:**
+  - Validates users.email and users.password.
+  - Session token created using users.id.
+
+---
+
+#### **1.2 Signup Screen**
+- **Purpose:** Enables users to register a new account.
+- **Features:**
+  - Input for email, password, and password confirmation.
+  - Form validation for email format and password strength.
+  - Error handling for duplicate accounts.
+- **Schema Alignment:**
+  - Adds new users into users (users.id, users.email, users.password).
+
+---
+
+#### **1.3 Password Reset Screen**
+- **Purpose:** Allows password recovery.
+- **Features:**
+  - Email input for requesting a reset link.
+  - New password form with validation.
+  - Confirmation message upon success.
+- **Schema Alignment:**
+  - Updates users.password.
+
+---
+
+## **2. Dashboard/Home Screen**
+
+#### **Purpose:** Central hub for user activity and navigation.
+- **Features:**
+  - **Lifetime Stats:** Aggregates workouts, total hours, and weight lifted.
+  - **Weekly Metrics:** Tracks streaks (e.g., "3 Week Streak"), workouts, and time spent.
+  - Notifications for overdue goals and milestones.
+  - Quick access links (Workouts, Analytics, Goals).
+- **Schema Alignment:**
+  - Aggregates workouts.date, progress.metrics, and goals.
+
+---
+
+## **3. Workout Screens**
+
+#### **3.1 Workout List Screen**
+- **Purpose:** Provides a history of workouts.
+- **Features:**
+  - Sortable by date.
+  - Filters for workout type and date range.
+  - Quick view of workout summaries.
+- **Schema Alignment:**
+  - Fetches workouts and links to workout_exercise.
+
+---
+
+#### **3.2 Workout Details Screen**
+- **Purpose:** Displays detailed data for a specific workout.
+- **Features:**
+  - Exercise list with:
+    - **Set Types:** Warm-Up, Drop Set, Failure (via set_type).
+    - **Notes Section:** Users can add, edit, or delete notes for individual exercises.
+    - Weight, reps, and rest timer per exercise.
+  - **Rest Timer Integration:** Auto-starts or adjusts based on user preferences.
+  - **Warm-Up Automation:** Pre-generated warm-up sets based on percentages of target weight.
+- **Schema Alignment:**
+  - Stores notes, set_type, and rest_timer_duration in workout_exercise.
+
+---
+
+#### **3.3 Create/Edit Workout Screen**
+- **Purpose:** Enables users to create or modify workouts.
+- **Features:**
+  - Add/remove exercises.
+  - Notes and tagging for sets.
+  - Auto-calculation of warm-up sets using dynamic formulas.
+  - Adjustable rest timers for each exercise.
+- **Schema Alignment:**
+  - Inserts or updates workouts and workout_exercise.
+
+---
+
+## **4. Exercise Library Screens**
+
+#### **4.1 Exercise List Screen**
+- **Purpose:** Lists all available exercises.
+- **Features:**
+  - Filter by categories (e.g., Strength, Cardio).
+  - Add new custom exercises.
+- **Schema Alignment:**
+  - Fetches exercises.category.
+
+---
+
+#### **4.2 Exercise Details Screen**
+- **Purpose:** Displays comprehensive stats for an exercise.
+- **Features:**
+  - Tabs for:
+    - **About:** Instructions and muscle mapping visualization.
+    - **History:** Logs of previous workouts.
+    - **Charts:** Interactive graphs (e.g., PRs, volume lifted, 1RM progress).
+    - **Records:** Historical bests for sets and 1RMs.
+  - Links to workouts where the exercise was used.
+- **Schema Alignment:**
+  - Fetches exercises, workout_exercise, and progress.
+
+---
+
+#### **4.3 Add/Edit Exercise Screen**
+- **Purpose:** Create or modify exercises.
+- **Features:**
+  - Input fields for name, category, and description.
+  - Save or cancel changes.
+- **Schema Alignment:**
+  - Inserts or updates exercises.
+
+---
+
+## **5. Analytics and Progress Screens**
+
+#### **5.1 Analytics Screen**
+- **Purpose:** Provides visual insights into user performance.
+- **Features:**
+  - **Lifetime Stats:** Total workouts, hours, and weight lifted.
+  - **Muscle Tracker:**
+    - Color-coded visualization of muscle engagement.
+    - Links to contributing exercises for each muscle group.
+  - **Interactive Graphs:** Users can filter data by week, month, or year.
+- **Schema Alignment:**
+  - Aggregates from progress, workouts, and workout_exercise.
+  - Links to muscle_group for tracking muscle engagement.
+
+---
+
+#### **5.2 Progress Overview Screen**
+- **Purpose:** Tracks long-term performance trends.
+- **Features:**
+  - Dynamic comparison of metrics (e.g., weight, body fat, strength gains).
+  - Graphs for workout frequency, strength progression, and 1RM.
+- **Schema Alignment:**
+  - Fetches data from progress and workout_exercise.
+
+---
+
+#### **5.3 Compare Progress Screen**
+- **Purpose:** Allows side-by-side progress comparisons.
+- **Features:**
+  - Select date ranges or specific workouts to compare.
+  - Highlights changes in metrics and exercise performance.
+- **Schema Alignment:**
+  - Pulls data from progress and workout_exercise.
+
+---
+
+## **6. Goal Setting Screens**
+
+#### **6.1 Goal List Screen**
+- **Purpose:** Displays active, completed, and overdue goals.
+- **Features:**
+  - Edit or mark goals as complete.
+- **Schema Alignment:**
+  - Links goals to progress for milestone tracking.
+
+#### **6.2 Create/Edit Goal Screen**
+- **Purpose:** Allows users to define or modify goals.
+- **Features:**
+  - Inputs for goal name, metric, and deadline.
+- **Schema Alignment:**
+  - Updates or inserts into goals.
+
+---
+
+## **7. Profile Screen**
+
+#### **Purpose:** Tracks user-specific stats and performance.
+- **Features:**
+  - **Weekly Activity Chart:** Bar chart for workout frequency.
+  - **PR Metrics Breakdown:**
+    - Best set tracking for individual exercises.
+    - Aggregated personal records for weight lifted and volume.
+  - User profile details (name, avatar, streaks).
+- **Schema Alignment:**
+  - Aggregates from progress, workouts, and workout_exercise.
+
+---
+
+## **8. Timer Integration**
+
+#### **Rest Timer Screen**
+- **Purpose:** Manages rest intervals during workouts.
+- **Features:**
+  - Adjustable timer (+/- 10 seconds).
+  - Skip button.
+  - Auto-start based on exercise settings.
+- **Schema Alignment:**
+  - Tracks timer settings via workout_exercise.rest_timer_duration.
+
+---
+
+## **Additional Features**
+
+### **Analytics Overview Screen**
+- **Purpose:** In-depth reporting for specific time periods.
+- **Features:**
+  - Muscle engagement heatmap.
+  - Detailed workout stats.
+- **Schema Alignment:**
+  - Aggregates data from workouts, progress, and workout_exercise.
