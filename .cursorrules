@@ -11,12 +11,13 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
 
 ### Core Features
 - 📝 **User Authentication**
-  - 📝 Login, Registration, Password Reset
-- 📝 **Workout Management**
-  - 📝 Workout List Screen
-  - 📝 Create/Edit Workout Screen
-  - 📝 Workout Details Screen
-- 📝 **Exercise Library**
+  - 📝 Login, Registration, Password Reset (Planned for last)
+- 🔄 **Workout Management**
+  - 🔄 Workout List Screen (In Progress)
+  - 🔄 Create/Edit Workout Screen (In Progress)
+  - 🔄 Workout Details Screen (In Progress)
+- 🔄 **Exercise Library**
+  - ✅ System Exercises Added
   - 📝 Search & Filter Exercises
   - 📝 Add/Edit Custom Exercises
 - 📝 **Progress Tracking**
@@ -31,6 +32,43 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
   - 📝 Unit Settings (Metric/Imperial)
   - 📝 Workout Reminders
 
+### Backend Setup (✅ Completed)
+1. ✅ Database Schema Created
+   - Users table
+   - Workouts table
+   - Exercises table
+   - Workout_exercises table
+   - Progress table
+   - Goals table
+2. ✅ Row Level Security (RLS) Policies
+3. ✅ Storage Bucket for Progress Photos
+4. ✅ Initial System Exercises Seeded
+5. ✅ Test User Created (ID: dd1b545a-7cfd-47b9-9c63-13fbdce2dd05)
+6. ✅ API Services Created
+   - User Service
+   - Workout Service
+   - Exercise Service
+   - Progress Service
+   - Goal Service
+
+### Current Focus
+1. 🔄 Implementing Workout Management UI
+   - Creating Workout List Screen
+   - Building Create/Edit Workout Form
+   - Implementing Workout Details View
+2. 🔄 Testing with Test User
+   - Using seeded exercises
+   - Creating sample workouts
+   - Testing CRUD operations
+
+### Next Steps
+1. Complete Workout Management screens
+2. Implement Exercise Library features
+3. Add Progress Tracking functionality
+4. Implement Goal Setting
+5. Add User Preferences
+6. Finally, implement Authentication
+
 ### Emoji Legend
 - ✅ Completed
 - 🔄 In Progress
@@ -42,10 +80,10 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
 ## Development Priorities
 1. **Build UI and core features without authentication.**
    - Skip login/registration for now to ease testing during local development.
-   - Use a dummy user/session for testing database interactions.
+   - Use test user (ID: dd1b545a-7cfd-47b9-9c63-13fbdce2dd05) for testing database interactions.
 
 2. **Create core features:**
-   - Workout Management
+   - Workout Management (In Progress)
    - Exercise Library
    - Progress Tracking
 
@@ -79,7 +117,7 @@ Refer to the `overview.mdc` file for the full project plan and feature details a
 ## Notes & Reminders
 1. **Supabase Setup:**
    - Ensure the `.env` file contains valid Supabase keys.
-   - Use Supabase’s SDK for all database and authentication logic.
+   - Use Supabase's SDK for all database and authentication logic.
 2. **Deployment:**
    - Test the app thoroughly before deploying as a PWA or mobile app.
 
@@ -103,5 +141,5 @@ export const dummyUser = {
 // Use this dummyUser for testing instead of actual authentication
 ```
 
-Replace the dummy user with real authentication logic once the app’s core features are complete.
+Replace the dummy user with real authentication logic once the app's core features are complete.
 
