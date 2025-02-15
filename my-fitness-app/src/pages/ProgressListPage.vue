@@ -89,7 +89,13 @@
             <q-card-section>
               <div class="text-h6">Weight Progress</div>
               <div class="chart-container">
-                <!-- Weight chart will go here -->
+                <WeightChart
+                  v-if="weightChartData.length"
+                  :data="weightChartData"
+                />
+                <div v-else class="text-grey text-center q-pa-md">
+                  No weight data recorded yet
+                </div>
               </div>
             </q-card-section>
           </q-card>
@@ -100,7 +106,13 @@
             <q-card-section>
               <div class="text-h6">Body Fat Progress</div>
               <div class="chart-container">
-                <!-- Body fat chart will go here -->
+                <BodyFatChart
+                  v-if="bodyFatChartData.length"
+                  :data="bodyFatChartData"
+                />
+                <div v-else class="text-grey text-center q-pa-md">
+                  No body fat data recorded yet
+                </div>
               </div>
             </q-card-section>
           </q-card>
@@ -255,6 +267,8 @@ import { ref, onMounted, computed } from 'vue';
 import { date } from 'quasar';
 import { progressService } from 'src/services';
 import type { Progress } from 'src/types/supabase';
+import WeightChart from 'src/components/WeightChart.vue';
+import BodyFatChart from 'src/components/BodyFatChart.vue';
 
 // Constants
 const TEST_USER_ID = 'dd1b545a-7cfd-47b9-9c63-13fbdce2dd05';
@@ -353,6 +367,27 @@ const lastPhotoDate = computed(() => {
     entry => entry.photos && Object.values(entry.photos).some(url => url)
   );
   return entry?.date;
+});
+
+// Chart data
+const weightChartData = computed(() => {
+  return progressEntries.value
+    .filter(entry => entry.metrics.weight)
+    .map(entry => ({
+      date: entry.date,
+      weight: entry.metrics.weight!
+    }))
+    .reverse();
+});
+
+const bodyFatChartData = computed(() => {
+  return progressEntries.value
+    .filter(entry => entry.metrics.body_fat)
+    .map(entry => ({
+      date: entry.date,
+      bodyFat: entry.metrics.body_fat!
+    }))
+    .reverse();
 });
 
 // Methods
