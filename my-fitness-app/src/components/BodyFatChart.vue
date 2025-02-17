@@ -67,7 +67,7 @@ const chartOptions = {
     y: {
       beginAtZero: false,
       ticks: {
-        callback: (value: number) => \`\${value}%\`
+        callback: (value: number) => `${value}%`
       }
     }
   }

@@ -605,22 +605,26 @@ const onSubmit = async () => {
 
     $q.notify({
       type: 'positive',
-      message: \`Workout \${isEdit.value ? 'updated' : 'created'} successfully\`
+      message: `Workout ${isEdit.value ? 'updated' : 'created'} successfully`
     });
 
-    router.push({ name: 'workouts' });
+    await router.push({ name: 'workouts' });
   } catch (err) {
     $q.notify({
       type: 'negative',
-      message: \`Failed to \${isEdit.value ? 'update' : 'create'} workout. Please try again.\`
+      message: `Failed to ${isEdit.value ? 'update' : 'create'} workout. Please try again.`
     });
     console.error('Error saving workout:', err);
   }
 };
 
 // Lifecycle
-onMounted(() => {
-  loadWorkout();
+onMounted(async () => {
+  try {
+    await loadWorkout();
+  } catch (err) {
+    console.error('Error in onMounted:', err);
+  }
 });
 </script>
 

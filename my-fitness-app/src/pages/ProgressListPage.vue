@@ -32,7 +32,7 @@
             <q-card-section>
               <div class="text-subtitle2 text-grey-7">Current Weight</div>
               <div class="text-h5">
-                {{ latestMetrics.weight ? \`\${latestMetrics.weight} kg\` : 'Not recorded' }}
+                {{ latestMetrics.weight ? latestMetrics.weight + ' kg' : 'Not recorded' }}
               </div>
               <div class="text-caption text-grey">
                 {{ weightChange > 0 ? '+' : ''}}{{ weightChange }} kg this month
@@ -46,7 +46,7 @@
             <q-card-section>
               <div class="text-subtitle2 text-grey-7">Body Fat %</div>
               <div class="text-h5">
-                {{ latestMetrics.body_fat ? \`\${latestMetrics.body_fat}%\` : 'Not recorded' }}
+                {{ latestMetrics.body_fat ? latestMetrics.body_fat + '%' : 'Not recorded' }}
               </div>
               <div class="text-caption text-grey">
                 {{ bodyFatChange > 0 ? '+' : ''}}{{ bodyFatChange }}% this month
@@ -179,16 +179,15 @@
                 <template v-slot:body-cell-photos="props">
                   <q-td :props="props">
                     <div v-if="hasPhotos(props.row.photos)" class="row q-gutter-x-xs">
-                      <q-btn
-                        v-for="(url, type) in props.row.photos"
-                        :key="type"
-                        v-if="url"
-                        flat
-                        dense
-                        round
-                        icon="photo"
-                        @click="showPhoto(url)"
-                      />
+                      <template v-for="(url, type) in filteredPhotos(props.row.photos)" :key="type">
+                        <q-btn
+                          flat
+                          dense
+                          round
+                          icon="photo"
+                          @click="showPhoto(url)"
+                        />
+                      </template>
                     </div>
                     <div v-else class="text-grey">No photos</div>
                   </q-td>
@@ -410,14 +409,14 @@ const formatDate = (dateStr: string) => {
 };
 
 const formatMeasurement = (key: string, value: number) => {
-  const labels: Record<string, string> = {
+  const labels = {
     chest: 'Chest',
     waist: 'Waist',
     hips: 'Hips',
     biceps: 'Biceps',
     thighs: 'Thighs'
   };
-  return \`\${labels[key]}: \${value}cm \`;
+  return `${labels[key]}: ${value}cm `;
 };
 
 const hasPhotos = (photos: Progress['photos']) => {
@@ -456,6 +455,11 @@ const deleteProgress = async () => {
       entry: null
     };
   }
+};
+
+const filteredPhotos = (photos: Progress['photos']) => {
+  if (!photos) return [];
+  return Object.entries(photos).filter(([_, url]) => url);
 };
 
 // Lifecycle

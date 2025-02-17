@@ -412,8 +412,8 @@ const onImageSelected = (file: File) => {
 
 const uploadImage = async (file: File): Promise<string> => {
   const fileExt = file.name.split('.').pop();
-  const fileName = \`\${Date.now()}.\${fileExt}\`;
-  const filePath = \`exercise-images/\${fileName}\`;
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `exercise-images/${fileName}`;
 
   const { error: uploadError } = await supabase.storage
     .from('exercises')
@@ -486,18 +486,22 @@ const onSubmit = async () => {
       });
     }
 
-    router.push({ name: 'exercises' });
+    await router.push({ name: 'exercises' });
   } catch (err) {
     $q.notify({
       type: 'negative',
-      message: \`Failed to \${isEdit.value ? 'update' : 'create'} exercise. Please try again.\`
+      message: `Failed to ${isEdit.value ? 'update' : 'create'} exercise. Please try again.`
     });
     console.error('Error saving exercise:', err);
   }
 };
 
 // Lifecycle
-onMounted(() => {
-  loadExercise();
+onMounted(async () => {
+  try {
+    await loadExercise();
+  } catch (err) {
+    console.error('Error in onMounted:', err);
+  }
 });
 </script> 

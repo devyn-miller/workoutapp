@@ -334,7 +334,7 @@ const onSubmit = async () => {
         user_id: TEST_USER_ID
       } as Progress);
     }
-    router.push({ name: 'progress' });
+    await router.push({ name: 'progress' });
   } catch (err) {
     console.error('Error saving progress:', err);
     // TODO: Show error notification
@@ -344,7 +344,11 @@ const onSubmit = async () => {
 };
 
 // Lifecycle
-onMounted(() => {
-  loadProgress();
+onMounted(async () => {
+  try {
+    await loadProgress();
+  } catch (err) {
+    console.error('Error in onMounted:', err);
+  }
 });
 </script> 

@@ -322,7 +322,7 @@ const deleteExercise = async () => {
       message: 'Exercise deleted successfully'
     });
 
-    router.push({ name: 'exercises' });
+    await router.push({ name: 'exercises' });
   } catch (err) {
     $q.notify({
       type: 'negative',
@@ -344,8 +344,12 @@ const getDifficultyColor = (difficulty: string): string => {
 };
 
 // Lifecycle
-onMounted(() => {
-  loadExercise();
+onMounted(async () => {
+  try {
+    await loadExercise();
+  } catch (err) {
+    console.error('Error in onMounted:', err);
+  }
 });
 </script>
 
