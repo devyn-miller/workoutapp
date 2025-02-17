@@ -1,0 +1,12 @@
+{
+  "extends": "./.quasar/tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "src/types/**/*.d.ts"
+  ],
+  "compilerOptions": {
+    // Your existing compiler options here
+  }
+}

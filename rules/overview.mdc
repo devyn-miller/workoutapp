@@ -1,0 +1,302 @@
+---
+description: constant reference for entire project
+globs: 
+---
+## 1. Overview & Features
+
+### Core Features
+
+1. **User Management & Authentication**
+   - **Registration & Login:** Secure user sign-up, login, and logout using JWT-based authentication.
+   - **Password Management:** Password reset and update functionality.
+   - **Profile Management:** Update profile information, including profile images and user preferences (units, theme, etc.).
+
+2. **Workout Management**
+   - **Workout Creation:** Users can create new workouts (with optional templates).
+   - **Workout Logging:** Log workout details including date, duration, and notes.
+   - **Workout Status:** Mark workouts as planned, in progress, or completed.
+   - **Exercise Association:** Link exercises to workouts, including ordering and grouping (supersets).
+
+3. **Exercise Library**
+   - **System & Custom Exercises:** Provide a catalog of pre-loaded (system) exercises and allow users to create their own.
+   - **Exercise Details:** Each exercise includes:
+     - Category (strength, cardio, flexibility, etc.)
+     - Primary and secondary muscle groups
+     - Difficulty level
+     - Equipment requirements
+     - Detailed descriptions
+   - **Exercise Search & Filtering:** 
+     - Search by name, category, or muscle group
+     - Filter by equipment availability
+     - Sort by difficulty
+   - **Exercise History:** Track personal records and progress for each exercise
+
+4. **Progress Tracking**
+   - **Metrics Logging:** Record progress data such as:
+     - Body weight
+     - Body measurements (chest, waist, arms, etc.)
+     - Body fat percentage
+     - Personal records for exercises
+   - **Progress Photos:** Upload and compare progress photos
+   - **Progress History:** View historical data with date stamps
+   - **Milestone Tracking:** Record and celebrate fitness milestones
+
+5. **Goal Setting**
+   - **Define Goals:** Set fitness or performance goals with target dates and values
+   - **Goal Status:** Track goals as in progress, completed, or abandoned
+   - **Goal Categories:**
+     - Weight goals (body weight or lifting)
+     - Measurement goals
+     - Performance goals (reps, time, distance)
+     - Custom goals with notes
+
+---
+
+## 2. Database Schema and Relationships
+
+The application uses a relational database (e.g., via Supabase) with the following core entities:
+
+### 2.1. User
+
+```typescript
+interface User {
+  id: string;                // Primary key (UUID)
+  username: string;          // Unique, indexed
+  email: string;             // Unique, indexed
+  password: string;          // Hashed with bcrypt
+  profile_image_url?: string; // Optional profile picture URL
+  preferences: {
+    units: 'metric' | 'imperial';
+    workout_reminder_time?: string; // e.g., "08:00" in 24-hour format
+    theme: 'light' | 'dark' | 'system';
+  };
+  created_at: string;        // Timestamp with timezone
+  updated_at: string;        // Timestamp with timezone
+}
+```
+
+- **Indexes:** username, email  
+- **Foreign Keys:** None
+
+---
+
+### 2.2. Workout
+
+```typescript
+interface Workout {
+  id: string;                // Primary key (UUID)
+  user_id: string;           // Foreign key -> User.id
+  template_id?: string;      // Foreign key -> WorkoutTemplate.id (if created from a template)
+  name: string;
+  date: string;              // Timestamp with timezone
+  duration: number;          // Duration in seconds
+  calories_burned?: number;
+  notes?: string;
+  status: WorkoutStatus;     // 'planned' | 'in_progress' | 'completed'
+  created_at: string;
+  updated_at: string;
+  
+  // Virtual Relationships:
+  exercises?: WorkoutExercise[];
+  user?: User;
+}
+```
+
+- **Indexes:** user_id, date  
+- **Foreign Keys:** user_id → User.id, template_id → (if applicable) WorkoutTemplate.id
+
+---
+
+### 2.3. Exercise
+
+```typescript
+interface Exercise {
+  id: string;                // Primary key (UUID)
+  user_id?: string;          // Foreign key -> User.id (nullable for system exercises)
+  name: string;
+  category: ExerciseCategory;
+  muscle_groups: MuscleGroup[]; // Array of enum values
+  description: string;
+  difficulty_level: DifficultyLevel;
+  equipment_required?: string[]; // Optional array of equipment names
+  is_system: boolean;        // True for pre-loaded exercises
+  created_at: string;
+  updated_at: string;
+}
+```
+
+- **Indexes:** name, category, muscle_groups  
+- **Foreign Keys:** user_id → User.id (if not a system exercise)
+
+---
+
+### 2.4. WorkoutExercise
+
+```typescript
+interface WorkoutExercise {
+  id: string;                // Primary key (UUID)
+  workout_id: string;        // Foreign key -> Workout.id
+  exercise_id: string;       // Foreign key -> Exercise.id
+  sets: WorkoutSet[];        // Array of set data
+  order: number;             // Order of the exercise in the workout
+  is_superset: boolean;
+  superset_group_id?: string; // Identifier to group exercises in a superset
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  
+  // Virtual Relationships:
+  exercise?: Exercise;
+  workout?: Workout;
+}
+```
+
+- **Indexes:** workout_id, exercise_id  
+- **Foreign Keys:** workout_id → Workout.id, exercise_id → Exercise.id
+
+---
+
+### 2.5. WorkoutSet
+
+```typescript
+interface WorkoutSet {
+  id: string;                   // Primary key (UUID)
+  workout_exercise_id: string;  // Foreign key -> WorkoutExercise.id
+  set_number: number;
+  reps?: number;
+  weight?: number;
+  duration?: number;            // For timed exercises (in seconds)
+  rir?: number;                 // Reps in Reserve
+  set_type: SetType;            // 'normal' | 'warmup' | 'dropset' | 'failure'
+  completed: boolean;
+  rest_time?: number;           // Rest time in seconds after this set
+  created_at: string;
+  updated_at: string;
+}
+```
+
+- **Indexes:** workout_exercise_id  
+- **Foreign Keys:** workout_exercise_id → WorkoutExercise.id
+
+---
+
+### 2.6. Progress
+
+```typescript
+interface Progress {
+  id: string;                // Primary key (UUID)
+  user_id: string;           // Foreign key -> User.id
+  date: string;              // Timestamp with timezone
+  metrics: {
+    weight?: number;
+    body_fat?: number;
+    measurements?: {         // Optional measurement details
+      chest?: number;
+      waist?: number;
+      hips?: number;
+      biceps?: number;
+      thighs?: number;
+    };
+  };
+  photos?: {                 // Optional photo URLs for progress tracking
+    front?: string;
+    back?: string;
+    side?: string;
+  };
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+```
+
+- **Indexes:** user_id, date  
+- **Foreign Keys:** user_id → User.id
+
+---
+
+### 2.7. Goal
+
+```typescript
+interface Goal {
+  id: string;                // Primary key (UUID)
+  user_id: string;           // Foreign key -> User.id
+  title: string;
+  description?: string;
+  target_date: string;       // Target date timestamp with timezone
+  status: GoalStatus;        // 'in_progress' | 'completed' | 'abandoned'
+  metric_type: MetricType;   // E.g., WEIGHT, REPS, DURATION, etc.
+  target_value: number;
+  current_value?: number;
+  reminder_frequency?: ReminderFrequency; // 'daily' | 'weekly' | 'monthly'
+  last_reminder_sent?: string;
+  created_at: string;
+  updated_at: string;
+}
+```
+
+- **Indexes:** user_id, status, target_date  
+- **Foreign Keys:** user_id → User.id
+
+---
+
+### 2.8. Enums and Types
+
+```typescript
+enum ExerciseCategory {
+  STRENGTH = 'strength',
+  CARDIO = 'cardio',
+  FLEXIBILITY = 'flexibility',
+  BALANCE = 'balance',
+  HIIT = 'hiit'
+}
+
+enum MuscleGroup {
+  CHEST = 'chest',
+  BACK = 'back',
+  SHOULDERS = 'shoulders',
+  BICEPS = 'biceps',
+  TRICEPS = 'triceps',
+  LEGS = 'legs',
+  CORE = 'core',
+  FULL_BODY = 'full_body'
+}
+
+enum DifficultyLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced'
+}
+
+enum WorkoutStatus {
+  PLANNED = 'planned',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed'
+}
+
+enum SetType {
+  NORMAL = 'normal',
+  WARMUP = 'warmup',
+  DROPSET = 'dropset',
+  FAILURE = 'failure'
+}
+
+enum GoalStatus {
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  ABANDONED = 'abandoned'
+}
+
+enum MetricType {
+  WEIGHT = 'weight',
+  REPS = 'reps',
+  DURATION = 'duration',
+  BODY_FAT = 'body_fat',
+  MEASUREMENT = 'measurement'
+}
+
+enum ReminderFrequency {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly'
+}
+```
